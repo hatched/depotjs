@@ -1,0 +1,12 @@
+env:
+  browser: true
+  node: true
+  es6: true
+parserOptions:
+  ecmaVersion: 6
+rules:
+  eqeqeq: ["error"]
+  semi: [2, "never"]
+  quotes: [2, "single"]
+  no-trailing-spaces: ["error"]
+  no-mixed-spaces-and-tabs: ["error"]
