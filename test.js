@@ -25,26 +25,31 @@ test('New collections are accessable on the db instance', t => {
   t.end();
 });
 
-test('Insert adds records to the internal store', t => {
-  const db = new Depot();
-  db.createCollection('test');
-  db.test.insert({ name: 'foo' });
-  t.equal(db.test._records.length, 1);
-  t.end();
-});
+test('Collection.insert()', t => {
 
-test('Insert generates a unique record id', t => {
-  const db = new Depot();
-  db.createCollection('test');
-  db.test.insert({ name: 'foo' });
-  t.deepEqual(db.test._records[0], { id: '0', name: 'foo' });
-  t.end();
-});
+  test('adds records to the internal store', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.insert({ name: 'foo' });
+    t.equal(db.test._records.length, 1);
+    t.end();
+  });
 
-test('Insert allows you to specify the record id', t => {
-  const db = new Depot();
-  db.createCollection('test');
-  db.test.insert({ id: 'suppliedid', name: 'foo' });
-  t.deepEqual(db.test._records[0], { id: 'suppliedid', name: 'foo' });
+  test('generates a unique record id', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.insert({ name: 'foo' });
+    t.deepEqual(db.test._records[0], { id: '0', name: 'foo' });
+    t.end();
+  });
+
+  test('allows you to specify the record id', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.insert({ id: 'suppliedid', name: 'foo' });
+    t.deepEqual(db.test._records[0], { id: 'suppliedid', name: 'foo' });
+    t.end();
+  });
+
   t.end();
 });
