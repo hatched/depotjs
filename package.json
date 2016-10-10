@@ -4,7 +4,7 @@
   "description": "Small, modular, & fast javascript datastore",
   "main": "depot.js",
   "scripts": {
-    "test": "node test.js",
+    "test": "node test.js | tap-diff",
     "lint": "eslint ."
   },
   "repository": {
@@ -25,6 +25,7 @@
   "homepage": "https://github.com/hatched/depotjs#readme",
   "devDependencies": {
     "eslint": "^3.7.1",
+    "tap-diff": "^0.1.1",
     "tape": "^4.6.2"
   }
 }
