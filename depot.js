@@ -10,6 +10,10 @@ function _parseNewCollectionConfig(config) {
   return config;
 };
 
+function _generateId(records) {
+  return records.length + '';
+};
+
 class Depot {
   constructor(config) {}
   createCollection(config) {
@@ -24,8 +28,14 @@ class Collection {
   constructor(config) {
     const parsedConfig = _parseNewCollectionConfig(config);
     this.name = parsedConfig.name;
+    this._records = [];
   }
-  insert() {}
+  insert(record) {
+    if (!record.id) {
+      record.id = _generateId(this._records);
+    }
+    this._records.push(record);
+  }
   remove() {}
   find() {}
 }
