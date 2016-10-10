@@ -10,10 +10,6 @@ function _parseNewCollectionConfig(config) {
   return config;
 };
 
-function _generateId(records) {
-  return records.size;
-};
-
 class Depot {
   constructor(config) {}
   createCollection(config) {
@@ -29,14 +25,24 @@ class Collection {
     const parsedConfig = _parseNewCollectionConfig(config);
     this.name = parsedConfig.name;
     this._records = new Map();
+    this._insertCount = 0;
   }
   insert(record) {
+    record._depotId = this._insertCount;
     if (!record.id) {
-      record.id = _generateId(this._records);
+      record.id = this._insertCount;
     }
+    this._insertCount += 1;
     this._records.set(record.id, record);
+    return record;
   }
-  remove() {}
+  remove(query) {
+    if (query.id) {
+      // If they have provided the id then delete that record
+      // regardless of any other data provided in the query.
+      return this._records.delete(query.id);
+    }
+  }
   find(query) {
     if (query.id) {
       // If they have provided the id then return that record
