@@ -152,18 +152,28 @@ test('Collection.watch', t => {
     t.end();
   });
 
-  t.test('registered * listener get called', t => {
+  t.test('registered "*" listener get called for add', t => {
     const db = new Depot();
     db.createCollection('test');
     db.test.watch('*', record => {
       t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
       t.end();
     });
-    db.test.insert({ name: 'foo' });
-    // TODO Missing 'add'
-    // TODO Missing 'remove'
-    // TODO Missing 'change'
+    const record = db.test.insert({ name: 'foo' });
   });
+
+  t.test('registered "*" listener get called for remove', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    const record = db.test.insert({ name: 'foo' });
+    db.test.watch('*', record => {
+      t.equal(record, true);
+      t.end();
+    });
+    db.rest.remove({ id: record.id });
+  });
+
+  // TODO Missing 'change'
 
   t.test('registered "add" listener get called', t => {
     const db = new Depot();
@@ -173,6 +183,17 @@ test('Collection.watch', t => {
       t.end();
     });
     db.test.insert({ name: 'foo' });
+  });
+
+  t.test('registered "remove" listener get called', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.watch('remove', id => {
+      t.deepEqual(id, 0);
+      t.end();
+    });
+    const record = db.test.insert({ name: 'foo' });
+    db.test.remove({ id: record.id });
   });
 
 });

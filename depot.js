@@ -50,9 +50,15 @@ class Collection {
     return record;
   }
   remove(query) {
-    if (query.id) {
+    if (query.id !== undefined) {
       // If they have provided the id then delete that record
       // regardless of any other data provided in the query.
+      this._listeners['*'].forEach((val, key, map) => {
+        val(query.id);
+      });
+      this._listeners.remove.forEach((val, key, map) => {
+        val(query.id);
+      });
       return this._records.delete(query.id);
     }
   }
