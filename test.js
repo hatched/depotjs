@@ -72,6 +72,27 @@ test('Collection.insert()', t => {
     t.end();
   });
 
+  t.test('calls the "all" and "add" event handlers', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    Promise.all([
+      new Promise(resolve => {
+        db.test.watch('*', record => {
+          t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
+          resolve();
+        });
+      }),
+      new Promise(resolve => {
+        db.test.watch('add', record => {
+          t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
+          resolve();
+        });
+      })
+    ]).then(() => { t.end(); });
+
+    db.test.insert({ name: 'foo' });
+  });
+
 });
 
 test('Collection.find()', t => {
@@ -101,6 +122,57 @@ test('Collection.remove()', t => {
     // Make sure it isn't there.
     t.equal(db.test._records.get(1), undefined);
     t.end();
+  });
+
+});
+
+test('Collection.watch', t => {
+
+  ['*', 'add', 'remove', 'change'].forEach(type => {
+    t.test(`can attach a listener for ${type} type`, t => {
+      const db = new Depot();
+      db.createCollection('test');
+      db.test.watch(type, () => {});
+      t.equal(db.test._listeners[type].size, 1);
+      t.equal(typeof db.test._listeners[type].get(0), 'function');
+      t.end();
+    });
+  });
+
+  t.test('adding multiple listeners properly increments the counts', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.watch('add', () => {});
+    db.test.watch('remove', () => {});
+    db.test.watch('change', () => {});
+    t.equal(db.test._listeners['add'].size, 1);
+    t.equal(db.test._listeners['remove'].size, 1);
+    t.equal(db.test._listeners['change'].size, 1);
+    t.equal(db.test._listenerCount, 3);
+    t.end();
+  });
+
+  t.test('registered * listener get called', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.watch('*', record => {
+      t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
+      t.end();
+    });
+    db.test.insert({ name: 'foo' });
+    // TODO Missing 'add'
+    // TODO Missing 'remove'
+    // TODO Missing 'change'
+  });
+
+  t.test('registered "add" listener get called', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.watch('add', record => {
+      t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
+      t.end();
+    });
+    db.test.insert({ name: 'foo' });
   });
 
 });

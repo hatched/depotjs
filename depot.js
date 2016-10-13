@@ -25,6 +25,13 @@ class Collection {
     const parsedConfig = _parseNewCollectionConfig(config);
     this.name = parsedConfig.name;
     this._records = new Map();
+    this._listeners = {
+      '*': new Map(),
+      'add': new Map(),
+      'remove': new Map(),
+      'change': new Map()
+    };
+    this._listenerCount = 0;
     this._insertCount = 0;
   }
   insert(record) {
@@ -34,6 +41,12 @@ class Collection {
     }
     this._insertCount += 1;
     this._records.set(record.id, record);
+    this._listeners['*'].forEach((val, key, map) => {
+      val(record);
+    });
+    this._listeners.add.forEach((val, key, map) => {
+      val(record);
+    });
     return record;
   }
   remove(query) {
@@ -49,6 +62,12 @@ class Collection {
       // regardless of any other data provided in the query.
       return this._records.get(query.id);
     }
+  }
+  watch(type, callback) {
+    const count = this._listenerCount;
+    this._listeners[type].set(count, callback);
+    this._listenerCount += 1;
+    return count;
   }
 }
 
