@@ -171,4 +171,13 @@ class Collection {
   }
 }
 
-module.exports = { Depot, Collection };
+/**
+  Depot
+  @module Depot/Collection
+*/
+module.exports = {
+  /** Create a Depot instance */
+  Depot,
+  /** Create a Collection instance */
+  Collection
+};
