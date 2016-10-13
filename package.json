@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node test.js | tap-diff",
     "lint": "eslint .",
-    "doc": "jsdoc -p *.js README.md",
+    "doc": "jsdoc -p *.js README.md -d ../depotjs.github.io",
     "min": "babel depot.js --no-comments -o depot-min.js"
   },
   "repository": {
