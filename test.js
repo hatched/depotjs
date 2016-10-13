@@ -72,7 +72,7 @@ test('Collection.insert()', t => {
     t.end();
   });
 
-  t.test('calls the "all" and "add" event handlers', t => {
+  t.test('calls the "*" and "add" event handlers', t => {
     const db = new Depot();
     db.createCollection('test');
     Promise.all([
@@ -91,6 +91,42 @@ test('Collection.insert()', t => {
     ]).then(() => { t.end(); });
 
     db.test.insert({ name: 'foo' });
+  });
+
+});
+
+test('Collection.update()', t => {
+
+  t.test('can update existing records', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    const record = db.test.insert({ name: 'foo' });
+    record.name = 'bar';
+    db.test.update(record);
+    t.deepEqual(db.test.find({ id: 0 }), { _depotId: 0, id: 0, name: 'bar' });
+    t.end();
+  });
+
+  t.test('calls the * and "update" event handlers', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    const record = db.test.insert({ name: 'foo' });
+    Promise.all([
+      new Promise(resolve => {
+        db.test.watch('*', record => {
+          t.deepEqual(record, { _depotId: 0, id: 0, name: 'bar' });
+          resolve();
+        });
+      }),
+      new Promise(resolve => {
+        db.test.watch('update', record => {
+          t.deepEqual(record, { _depotId: 0, id: 0, name: 'bar' });
+          resolve();
+        });
+      })
+    ]).then(() => { t.end(); });
+    record.name = 'bar';
+    db.test.update(record);
   });
 
 });
@@ -128,7 +164,7 @@ test('Collection.remove()', t => {
 
 test('Collection.watch', t => {
 
-  ['*', 'add', 'remove', 'change'].forEach(type => {
+  ['*', 'add', 'remove', 'update'].forEach(type => {
     t.test(`can attach a listener for ${type} type`, t => {
       const db = new Depot();
       db.createCollection('test');
@@ -144,10 +180,10 @@ test('Collection.watch', t => {
     db.createCollection('test');
     db.test.watch('add', () => {});
     db.test.watch('remove', () => {});
-    db.test.watch('change', () => {});
+    db.test.watch('update', () => {});
     t.equal(db.test._listeners['add'].size, 1);
     t.equal(db.test._listeners['remove'].size, 1);
-    t.equal(db.test._listeners['change'].size, 1);
+    t.equal(db.test._listeners['update'].size, 1);
     t.equal(db.test._listenerCount, 3);
     t.end();
   });
@@ -159,7 +195,7 @@ test('Collection.watch', t => {
       t.deepEqual(record, { _depotId: 0, id: 0, name: 'foo' });
       t.end();
     });
-    const record = db.test.insert({ name: 'foo' });
+    db.test.insert({ name: 'foo' });
   });
 
   t.test('registered "*" listener get called for remove', t => {
@@ -167,13 +203,23 @@ test('Collection.watch', t => {
     db.createCollection('test');
     const record = db.test.insert({ name: 'foo' });
     db.test.watch('*', record => {
-      t.equal(record, true);
+      t.equal(record, 0);
       t.end();
     });
-    db.rest.remove({ id: record.id });
+    db.test.remove({ id: record.id });
   });
 
-  // TODO Missing 'change'
+  t.test('registered "*" listener get called for update', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    const record = db.test.insert({ name: 'foo' });
+    db.test.watch('*', record => {
+      t.deepEqual(db.test.find({ id: 0 }), { _depotId: 0, id: 0, name: 'bar' });
+      t.end();
+    });
+    record.name = 'bar';
+    db.test.update(record);
+  });
 
   t.test('registered "add" listener get called', t => {
     const db = new Depot();

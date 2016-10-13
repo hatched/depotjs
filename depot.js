@@ -29,7 +29,7 @@ class Collection {
       '*': new Map(),
       'add': new Map(),
       'remove': new Map(),
-      'change': new Map()
+      'update': new Map()
     };
     this._listenerCount = 0;
     this._insertCount = 0;
@@ -49,6 +49,19 @@ class Collection {
     });
     return record;
   }
+  update(newRecord) {
+    const depotId = newRecord._depotId;
+    const mergedRecord = Object.assign(
+      this._records.get(depotId), newRecord);
+    this._records.set(depotId, mergedRecord);
+    this._listeners['*'].forEach((val, key, map) => {
+      val(mergedRecord);
+    });
+    this._listeners.update.forEach((val, key, map) => {
+      val(mergedRecord);
+    });
+    return mergedRecord;
+  }
   remove(query) {
     if (query.id !== undefined) {
       // If they have provided the id then delete that record
@@ -63,7 +76,7 @@ class Collection {
     }
   }
   find(query) {
-    if (query.id) {
+    if (query.id !== undefined) {
       // If they have provided the id then return that record
       // regardless of any other data provided in the query.
       return this._records.get(query.id);
