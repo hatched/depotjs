@@ -169,6 +169,13 @@ class Collection {
     this._listenerCount += 1;
     return count;
   }
+  /**
+    Returns the number of records in the collection.
+    @return {Integer} The number of records in the collection.
+  */
+  size() {
+    return this._records.size;
+  }
 }
 
 /**

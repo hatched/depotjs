@@ -243,3 +243,22 @@ test('Collection.watch', t => {
   });
 
 });
+
+test('Collection.size()', t => {
+
+  t.test('can return the number of records in the collection', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    db.test.insert({ name: 'foo' });
+    db.test.insert({ name: 'foo' });
+    db.test.insert({ name: 'foo' });
+    t.equal(db.test.size(), 3);
+    db.test.remove({ id: 0 });
+    t.equal(db.test.size(), 2);
+    db.test.insert({ name: 'foo' });
+    db.test.insert({ name: 'foo' });
+    t.equal(db.test.size(), 4);
+    t.end();
+  });
+
+});

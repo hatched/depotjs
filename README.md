@@ -52,3 +52,8 @@ Create watcher:
 ```JavaScript
 collection.watch('*', record => { });
 ```
+
+Get the collection size
+```JavaScript
+collection.size();
+```
