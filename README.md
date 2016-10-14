@@ -33,27 +33,27 @@ const db = new Depot();
 
 Add a collection:
 ```JavaScript
-const collection = db.createCollection();
+const kites = db.createCollection('kites');
 ```
 
 Insert records:
 ```JavaScript
-collection.insert({
+db.kites.insert({
   name: 'foo'
 });
 ```
 
 Find records:
 ```JavaScript
-collection.find({ id: 8 });
+db.kites.find({ id: 8 });
 ```
 
 Create watcher:
 ```JavaScript
-collection.watch('*', record => { });
+db.kites.watch('*', record => { });
 ```
 
 Get the collection size
 ```JavaScript
-collection.size();
+db.kites.size();
 ```
