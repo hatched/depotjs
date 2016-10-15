@@ -57,3 +57,11 @@ Get the collection size
 ```JavaScript
 db.kites.size();
 ```
+
+Register external Collection instances
+```JavaScript
+class Kites extends Collection {
+  kite() {}
+}
+db.register(new Kites('kites'));
+```

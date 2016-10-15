@@ -12,6 +12,9 @@ function _parseNewCollectionConfig(config) {
     // string then it is the collection name.
     return { name: config };
   }
+  if (!config.name) {
+    throw 'Collection requires `name` property';
+  }
   // If it's an object, pass that through.
   return config;
 };
@@ -35,6 +38,19 @@ class Depot {
     const newCollection = new Collection(parsedConfig);
     this[parsedConfig.name] = newCollection;
     return newCollection;
+  }
+  /**
+    Registers an external collection with the Depot instance.
+    @param {Collection} collection - The new Collection instance to register.
+    @throws Will throw if the collection is missing the `name` property.
+    @throws Will throw if a collection already exists with the same name.
+  */
+  register(collection) {
+    const name = collection.name;
+    if (this[name]) {
+      throw 'Collection already exists with that name';
+    }
+    this[name] = collection;
   }
 }
 

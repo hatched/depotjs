@@ -10,19 +10,71 @@ test('A new database can be instantiated', t => {
   t.end();
 });
 
-test('It returns a new collection instance', t => {
-  const db = new Depot();
-  const collection = db.createCollection('test');
-  t.equal(collection instanceof Collection, true);
-  t.equal(collection.name, 'test');
-  t.end();
+test('Depot.createCollection()', t => {
+
+  t.test('It returns a new collection instance', t => {
+    const db = new Depot();
+    const collection = db.createCollection('test');
+    t.equal(collection instanceof Collection, true);
+    t.equal(collection.name, 'test');
+    t.end();
+  });
+
+  t.test('New collections are accessable on the db instance', t => {
+    const db = new Depot();
+    db.createCollection('test');
+    t.equal(db.test instanceof Collection, true);
+    t.end();
+  });
+
+  t.test('It throws if the collection name is not supplied', t => {
+    const db = new Depot();
+    t.throws(
+      function() { db.createCollection(); },
+      'Collection requires `name` property');
+    t.end();
+  });
+
 });
 
-test('New collections are accessable on the db instance', t => {
-  const db = new Depot();
-  db.createCollection('test');
-  t.equal(db.test instanceof Collection, true);
-  t.end();
+test('Depot.register()', t => {
+
+  t.test('it can store external Collection classes', t => {
+    const db = new Depot();
+    const collection = new Collection('test');
+    t.equal(db.test, undefined);
+    db.register(collection);
+    t.equal(db.test instanceof Collection, true);
+    t.end();
+  });
+
+  t.test('it can store subclasses of a Collection', t => {
+    const db = new Depot();
+    class Kites extends Collection {
+      kite() {
+        return 'loop';
+      }
+    }
+    db.register(new Kites('kites'));
+    t.equal(db.kites instanceof Kites, true);
+    t.end();
+  });
+
+  t.test('it throws if collection already exists with same name', t => {
+    const db = new Depot();
+    class Kites extends Collection {
+      kite() {
+        return 'loop';
+      }
+    }
+    db.register(new Kites('kites'));
+    t.equal(db.kites instanceof Kites, true);
+    t.throws(
+      function() { db.register(new Kites('kites')); },
+      'Collection already exists with that name');
+    t.end();
+  });
+
 });
 
 test('Collection.insert()', t => {
