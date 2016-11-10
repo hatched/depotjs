@@ -1,7 +1,7 @@
 ## Depot JS
 ### Small, modular, & fast JavaScript datastore.
 
-![Depot.js logo](/images/depot.png "Depot.js")
+![Depot.js logo](http://depotjs.com/images/depot.png "Depot.js")
 
 Version: 0.1 | [Repository](https://github.com/hatched/depotjs) | [depotjs.com](http://depotjs.com)
 
