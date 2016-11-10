@@ -1,6 +1,8 @@
 ## Depot JS
 ### Small, modular, & fast JavaScript datastore.
 
+![Depot.js logo](/images/depot.png "Depot.js")
+
 Version: 0.1 | [Repository](https://github.com/hatched/depotjs) | [depotjs.com](http://depotjs.com)
 
 Depot.js has three main philosophies in decending order of importance:
@@ -65,3 +67,5 @@ class Kites extends Collection {
 }
 db.register(new Kites('kites'));
 ```
+
+*Special thanks to [@huwshimi](https://twitter.com/huwshimi) for the logo!*
